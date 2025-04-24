@@ -64,12 +64,12 @@ LOG_BACKUP_COUNT=5
 
 ### Install Docker and Docker-Compose (debian / Ubuntu)
 
-'''apt update
+```apt update
 apt upgrade -y
 apt install curl -y
 apt install docker-compose -y
 curl -sSL https://get.docker.com/ | sh
-'''
+```
 
 ### Using Docker Compose
 
