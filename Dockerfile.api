@@ -1,0 +1,16 @@
+FROM python:3.11-slim
+
+LABEL maintainer="Max Schmid"
+
+WORKDIR /app
+RUN mkdir -p /app/logs
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./api.py .
+
+EXPOSE 5001
+
+CMD ["python", "api.py"]
+

@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - netauto
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  worker:
+    image: netbox_vlan_worker:1.1
+    build:
+      context: .
+      dockerfile: Dockerfile.worker  
+    env_file: .env
+    volumes:
+      - netauto_logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - netauto
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; exit(0 if os.path.exists('/app/logs/netauto.log') else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  api:
+    image: netbox_vlan_api:1.1    
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: python api.py
+    env_file: .env
+    ports:
+      - "${FLASK_PORT}:${FLASK_PORT}"
+    volumes:
+      - netauto_logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - netauto
+    restart: unless-stopped
+
+networks:
+  netauto:
+    driver: bridge
+
+volumes:
+  redis_data:
+  netauto_logs:

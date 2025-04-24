@@ -1,0 +1,20 @@
+FROM python:3.11-slim
+
+LABEL maintainer="Max Schmid"
+
+WORKDIR /app
+RUN mkdir -p /app/logs
+
+# Set Python to run in unbuffered mode
+ENV PYTHONUNBUFFERED=1
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./worker.py .
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import os; exit(0 if os.path.exists('/app/logs/netauto.log') else 1)"
+
+CMD ["python", "worker.py"]

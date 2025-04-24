@@ -1,0 +1,10 @@
+# ignore all .env files
+.env
+# ignore all log files in any directory
+logs/*
+# Python venvironment
+.venv/
+# ignore all .DS_Store files
+.DS_Store
+# ignore all .dockerignore files
+.dockerignore
