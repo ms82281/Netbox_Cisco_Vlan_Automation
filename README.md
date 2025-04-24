@@ -157,7 +157,7 @@ Logs are stored in `/app/logs/netauto.log` with automatic rotation:
 
 After changing the code, the docker images have to be recreated and updated.
 
-'''docker-compose down
+```docker-compose down
 docker-compose build
 docker-compose up -d
-'''
+```
